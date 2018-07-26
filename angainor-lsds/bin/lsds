@@ -1,0 +1,72 @@
+#!/usr/bin/env sh
+set -eo pipefail
+
+if [ ! -z ${LSDS_ENV+x} ]
+then
+    echo lol
+    [ -f "$LSDS_ENV"] && export $(cat "$LSDS_ENV" | grep -v ^# | xargs)
+fi
+
+# FIXME
+# Create 2 configuration file Default (not to be tampered with) and User Custom
+export DOCKER_USER=${DOCKER_USER:-"mapa12"}
+export LSDS_DIR=${LSDS_DIR:-"/tmp/lsdsuite"}
+export LSDS_FAULTS_FOLDER_CONTAINER=${LSDS_FAULTS_FOLDER_CONTAINER:-"/usr/lib/faultsee/"}
+export LSDS_FAULTS_FOLDER_HOST=${LSDS_FAULTS_FOLDER_HOST:-"/tmp/faultsee/faults-1/"}
+export LSDS_FAULTS_FOLDER_LOCAL=${LSDS_FAULTS_FOLDER_LOCAL:-"./faults"}
+# export LSDS_REGISTRY=${LSDS_REGISTRY:-"registry.lsd-master.tk:443/"}
+# export LSDS_MASTER=${LSDS_MASTER:-"${LSDS_REGISTRY}lsdsuite/master"}
+# export LSDS_SLAVE=${LSDS_SLAVE:-"${LSDS_REGISTRY}lsdsuite/slave"}
+# export LSDS_IPAM_PLUGIN=${LSDS_IPAM_PLUGIN:-"${LSDS_REGISTRY}lsdsuite/lsdsuite-ipam"}
+# export LSDS_IPAM_SERVER=${LSDS_IPAM_SERVER:-"${LSDS_REGISTRY}lsdsuite/ipam-server"}
+export LSDS_MASTER=${LSDS_MASTER:-"docker.io/${DOCKER_USER}/faultsee-master:dev_latest"}
+export LSDS_SLAVE=${LSDS_SLAVE:-"docker.io/${DOCKER_USER}/faultsee-slave:dev_latest"}
+export LSDS_NTP_SYNC_IMAGE=${LSDS_NTP_SYNC_IMAGE:-"docker.io/${DOCKER_USER}/ntp-sync:1.0"}
+export LSDS_IPAM_PLUGIN=${LSDS_IPAM_PLUGIN:-"docker.io/${DOCKER_USER}/faultsee-ipam:latest"}
+export LSDS_IPAM_SERVER=${LSDS_IPAM_SERVER:-"docker.io/${DOCKER_USER}/ipam-server:latest"}
+export LSDS_SLAVE_PORT=${LSDS_SLAVE_PORT:-"7000"}
+
+export LSDS_IPAM_PORT=${LSDS_IPAM_PORT:-"7001"}
+export LSDS_MONO_KILL=${LSDS_MONO_KILL:-""}
+export LSDS_KILL_BATCH=${LSDS_KILL_BATCH:-"1000"}
+
+echo -e "Current Configurations:"
+echo -e "\e[33mLSDS_DIR                    : $LSDS_DIR\e[0m"
+echo -e "\e[33mLSDS_FAULTS_FOLDER_LOCAL    : $LSDS_FAULTS_FOLDER_LOCAL\e[0m"
+echo -e "\e[33mLSDS_FAULTS_FOLDER_HOST     : $LSDS_FAULTS_FOLDER_HOST\e[0m"
+echo -e "\e[33mLSDS_FAULTS_FOLDER_CONTAINER: $LSDS_FAULTS_FOLDER_CONTAINER\e[0m"
+# echo -e "\e[33mLSDS_REGISTRY               : $LSDS_REGISTRY\e[0m"
+echo -e "\e[33mLSDS_MASTER                 : $LSDS_MASTER\e[0m"
+echo -e "\e[33mLSDS_SLAVE                  : $LSDS_SLAVE\e[0m"
+echo -e "\e[33mLSDS_NTP_SYNC_IMAGE         : $LSDS_NTP_SYNC_IMAGE\e[0m"
+echo -e "\e[33mLSDS_IPAM_PLUGIN            : $LSDS_IPAM_PLUGIN\e[0m"
+echo -e "\e[33mLSDS_IPAM_SERVER            : $LSDS_IPAM_SERVER\e[0m"
+echo -e "\e[33mLSDS_SLAVE_PORT             : $LSDS_SLAVE_PORT\e[0m"
+echo -e "\e[33mLSDS_IPAM_PORT              : $LSDS_IPAM_PORT\e[0m"
+echo -e "\e[33mLSDS_MONO_KILL              : $LSDS_MONO_KILL\e[0m"
+echo -e "\e[33mLSDS_KILL_BATCH             : $LSDS_KILL_BATCH\e[0m"
+
+mkdir -p "$LSDS_DIR"
+docker run --interactive --tty --rm \
+    --user="$(id -u)":"$(id -g)" \
+    $(id -G | xargs -n1 printf -- '--group-add=%s\n') \
+    --network=host \
+    --volume="/etc/passwd":"/etc/passwd":ro \
+    --volume="/etc/group":"/etc/group":ro \
+    --volume="/var/run/docker.sock":"/var/run/docker.sock" \
+    --volume="$PWD":"/opt/lsdsuite/" \
+    --volume="$LSDS_DIR":"$LSDS_DIR" \
+    --env="USER=$USER" \
+    --env="LSDS_DIR=$LSDS_DIR" \
+    --env="LSDS_SLAVE=$LSDS_SLAVE" \
+    --env="LSDS_NTP_SYNC_IMAGE=$LSDS_NTP_SYNC_IMAGE" \
+    --env="LSDS_IPAM_PLUGIN=$LSDS_IPAM_PLUGIN" \
+    --env="LSDS_IPAM_SERVER=$LSDS_IPAM_SERVER" \
+    --env="LSDS_SLAVE_PORT=$LSDS_SLAVE_PORT" \
+    --env="LSDS_IPAM_PORT=$LSDS_IPAM_PORT" \
+    --env="LSDS_MONO_KILL=$LSDS_MONO_KILL" \
+    --env="LSDS_KILL_BATCH=$LSDS_KILL_BATCH" \
+    --env="LSDS_FAULTS_FOLDER_LOCAL=$LSDS_FAULTS_FOLDER_LOCAL" \
+    --env="LSDS_FAULTS_FOLDER_HOST=$LSDS_FAULTS_FOLDER_HOST" \
+    --env="LSDS_FAULTS_FOLDER_CONTAINER=$LSDS_FAULTS_FOLDER_CONTAINER" \
+    "$LSDS_MASTER" "$@"

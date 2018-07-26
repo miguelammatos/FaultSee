@@ -1,0 +1,23 @@
+{
+    "description": "LSDSuite IPAM Plugin",
+    "documentation": "TODO",
+    "entrypoint": ["/app"],
+    "env": [
+        {
+            "name": "REMOTE",
+            "settable": ["value"],
+            "value": "127.0.0.1:7001"
+        },
+        {
+            "name": "NODE_ID",
+            "settable": ["value"],
+            "value": "0"
+        }],
+    "interface": {
+        "socket": "ipam.sock",
+        "types": ["docker.ipamdriver/1.0"]
+    },
+    "network": {
+        "type": "host"
+    }
+}

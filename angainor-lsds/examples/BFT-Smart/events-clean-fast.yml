@@ -1,0 +1,96 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        server-1: 0
+        server-2: 0
+        server-3: 0
+        server-4: 0
+        ycsb-client-load: 0
+        ycsb-client-run: 0
+
+    - moment:
+        time: 10
+        services:
+            server-1:
+                - start:
+                      amount: 1
+            server-2:
+                - start:
+                      amount: 1
+            server-3:
+                - start:
+                      amount: 1
+            server-4:
+                - start:
+                      amount: 1
+
+    - moment:
+        time: 40
+        services:
+            ycsb-client-load:
+                - start:
+                      amount: 1
+    #  wait for operation LOAD to end
+    - moment:
+        time: 80
+        services:
+          ycsb-client-run:
+            - start:
+                    amount: 1
+    - moment:
+        time: 85
+        services:
+          ycsb-client-run:
+            - start:
+                    amount: 1
+    - moment:
+        time: 90
+        services:
+          ycsb-client-run:
+            - start:
+                    amount: 1
+    - moment:
+        time: 95
+        services:
+          ycsb-client-run:
+            - start:
+                    amount: 1
+    - moment:
+        time: 100
+        services:
+          ycsb-client-run:
+            - start:
+                    amount: 1
+    - moment:
+        time: 105
+        services:
+          ycsb-client-run:
+            - start:
+                    amount: 1
+    - moment:
+        time: 110
+        services:
+          ycsb-client-run:
+            - start:
+                    amount: 1
+    - moment:
+        time: 115
+        services:
+          ycsb-client-run:
+            - start:
+                    amount: 1
+    - moment:
+        time: 120
+        services:
+          ycsb-client-run:
+            - start:
+                    amount: 1
+    - moment:
+        time: 125
+        services:
+          ycsb-client-run:
+            - start:
+                    amount: 1
+    - end: 250

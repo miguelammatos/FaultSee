@@ -1,0 +1,27 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        test-waste-cpu: 5
+    - moment:
+        time: 30
+        services:
+            test-waste-cpu:
+              - fault:
+                  target:
+                      specific:
+                          - 1
+                  cpu:
+                      duration: 30
+    - moment:
+        time: 60
+        services:
+            test-waste-cpu:
+              - fault:
+                  target:
+                      specific:
+                          - 2
+                  cpu:
+                      duration: 30
+    - end: 120

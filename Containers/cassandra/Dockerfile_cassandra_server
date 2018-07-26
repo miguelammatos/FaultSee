@@ -1,0 +1,12 @@
+FROM cassandra:3.11.4
+
+COPY mapa12-entrypoint.sh /
+
+ENV DNS_CASSANDRA_NAME tasks.cassandra
+
+ENTRYPOINT [ "/bin/sh", "-c", "/mapa12-entrypoint.sh" ]
+
+ENV HEAP_NEWSIZE 128M
+ENV MAX_HEAP_SIZE 1024M
+
+RUN chmod +x /mapa12-entrypoint.sh

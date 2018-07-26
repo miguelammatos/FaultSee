@@ -1,0 +1,20 @@
+version: "3"
+services:
+  webserver:
+    image: "docker.io/mapa12/server-signal-handler"
+    # image: "docker.io/library/alpine"
+    # command: ["sleep", "10000"]
+    deploy:
+        resources:
+            limits:
+                cpus: '0.50'
+                memory: 50M
+  alphaNamedService:
+    image: "docker.io/mapa12/server-signal-handler"
+    # image: "docker.io/library/alpine"
+    # command: ["sleep", "10000"]
+    deploy:
+        resources:
+            limits:
+                cpus: '0.50'
+                memory: 50M

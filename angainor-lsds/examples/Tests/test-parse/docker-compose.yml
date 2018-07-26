@@ -1,0 +1,9 @@
+version: "3"
+services:
+  alpine:
+    image: "docker.io/library/alpine"
+    command: ["sleep", "10000"]
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none

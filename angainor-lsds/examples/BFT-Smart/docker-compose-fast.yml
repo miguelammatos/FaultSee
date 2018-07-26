@@ -1,0 +1,130 @@
+version: '3.4'
+services:
+  server-1:
+    labels:
+        # gather detailed stats
+        org.lsdsuite.stats: "true"
+    image: docker.io/mapa12/bft-smart-experiment:latest
+    # image: "docker.io/mapa12/dns-alpine:latest"
+    command: bash /source-code/runscripts/startReplicaYCSB.sh
+    environment:
+      # REPLICA_INDEX={{.Task.Slot}}
+      REPLICA_INDEX: 0
+      MAX_HEAP_SIZE: 2048M
+      # ENV HEAP_NEWSIZE 128M # default
+    deploy:
+      # FaultSee forces restart_policy to be none anyway
+      restart_policy:
+          condition: none
+      replicas: 0
+    networks:
+      - "backend"
+
+  server-2:
+    labels:
+        # gather detailed stats
+        org.lsdsuite.stats: "true"
+    image: docker.io/mapa12/bft-smart-experiment:latest
+    command: bash /source-code/runscripts/startReplicaYCSB.sh
+    environment:
+      # REPLICA_INDEX={{.Task.Slot}}
+      REPLICA_INDEX: 1
+      MAX_HEAP_SIZE: 2048M
+      # ENV HEAP_NEWSIZE 128M # default
+    deploy:
+        resources:
+          limits:
+              memory: 3G
+        # FaultSee forces restart_policy to be none anyway
+        restart_policy:
+            condition: none
+        replicas: 0
+    networks:
+      - "backend"
+
+  server-3:
+    labels:
+        # gather detailed stats
+        org.lsdsuite.stats: "true"
+    image: docker.io/mapa12/bft-smart-experiment:latest
+    command: bash /source-code/runscripts/startReplicaYCSB.sh 2
+    environment:
+      # REPLICA_INDEX={{.Task.Slot}}
+      REPLICA_INDEX: 2
+      MAX_HEAP_SIZE: 2048M
+      # ENV HEAP_NEWSIZE 128M # default
+    deploy:
+        # FaultSee forces restart_policy to be none anyway
+        restart_policy:
+            condition: none
+        replicas: 0
+    networks:
+      - "backend"
+
+  server-4:
+    labels:
+        # gather detailed stats
+        org.lsdsuite.stats: "true"
+    image: docker.io/mapa12/bft-smart-experiment:latest
+    command: bash /source-code/runscripts/startReplicaYCSB.sh 3
+    environment:
+      # REPLICA_INDEX={{.Task.Slot}}
+      REPLICA_INDEX: 3
+      MAX_HEAP_SIZE: 2048M
+      # ENV HEAP_NEWSIZE 128M # default
+    deploy:
+        # FaultSee forces restart_policy to be none anyway
+        restart_policy:
+            condition: none
+        replicas: 0
+    networks:
+      - "backend"
+
+  ycsb-client-load:
+    labels:
+        # gather detailed stats
+        org.lsdsuite.stats: "true"
+    image: docker.io/mapa12/bft-smart-experiment:latest
+    command: bash /source-code/runscripts/start-ycsb-client.sh
+    environment:
+        ACTION: load
+        RECNUM: 3000
+        OPNUM:  1250
+        # THREADS: 10
+        # RECNUM: 300000
+        # OPNUM:  125000
+    deploy:
+        restart_policy:
+            condition: none
+        replicas: 0
+    networks:
+      - "backend"
+
+  ycsb-client-run:
+    labels:
+        # gather detailed stats
+        org.lsdsuite.stats: "true"
+    image: docker.io/mapa12/bft-smart-experiment:latest
+    command: bash /source-code/runscripts/start-ycsb-client.sh
+    environment:
+        ACTION: run
+        THREADS: 10
+        RECNUM: 3000
+        OPNUM:  5750
+        # RECNUM: 300000
+        # OPNUM:  5750000
+    deploy:
+        restart_policy:
+            condition: none
+        replicas: 0
+    networks:
+      - "backend"
+
+networks:
+  backend:
+    driver: overlay
+    ipam:
+      config:
+        - subnet: 10.22.0.0/16
+
+# export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64

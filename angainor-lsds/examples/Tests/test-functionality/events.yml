@@ -1,0 +1,69 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        webserver: 9
+    - moment:
+        time: 20
+        services:
+            webserver:
+                - start:
+                      amount: 1
+    - moment:
+        time: 10
+        services:
+            webserver:
+                - start:
+                    percentage: 1 #0
+    - moment:
+        time: 21
+        mark: "21 seconds elapsed"
+
+    - moment:
+        time: 30
+        services:
+            webserver:
+                - fault:
+                    target:
+                        specific: [1, 2]
+                    kill:
+                - fault:
+                    target:
+                        specific: [4, 5]
+                    signal:
+                        kills_container: "yes"
+                        signal: SIGINT
+                - fault:
+                    target:
+                        specific: [3]
+                    cpu:
+                        duration: 15
+                - fault:
+                    target:
+                        specific: [0]
+                    custom:
+                        kills_container: "no"
+                        fault_file_name: waste_cpu
+    - moment:
+        time: 50
+        mark: "(: removing containers :)"
+        services:
+            webserver:
+                - stop:
+                    specific: [0]
+    - moment:
+        time: 60
+        mark: "(: removing containers :)"
+        services:
+            webserver:
+                - stop:
+                    amount: 2
+    - moment:
+        time: 70
+        mark: "(: removing containers :)"
+        services:
+            webserver:
+                - stop:
+                    percentage: 30
+    - end: 90

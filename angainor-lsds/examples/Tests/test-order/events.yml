@@ -1,0 +1,98 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        webserver: 9
+        alphaNamedService: 0
+
+    # Check alpha Comes Before webserver
+    - moment:
+        time: 11
+        services:
+            webserver:
+                - start:
+                      amount: 1
+            alphaNamedService:
+                - start:
+                        amount: 10
+    # check 10 comes before 20
+    - moment:
+        time: 10
+        services:
+            webserver:
+                - start:
+                    percentage: 1 #0
+    - moment:
+        time: 21
+        mark: "21 seconds elapsed"
+
+    - moment:
+        time: 30
+        services:
+            webserver:
+                - fault:
+                    target:
+                        specific: [1, 2]
+                    kill:
+                - fault:
+                    target:
+                        specific: [4, 5]
+                    signal:
+                        kills_container: "yes"
+                        signal: SIGINT
+                - fault:
+                    target:
+                        specific: [3]
+                    cpu:
+                        duration: 15
+                - fault:
+                    target:
+                        specific: [0]
+                    custom:
+                        kills_container: "no"
+                        fault_file_name: waste_cpu
+            alphaNamedService:
+                - fault:
+                    target:
+                        amount: 1
+                    kill:
+                - stop:
+                    amount: 3
+                - fault:
+                    target:
+                        amount: 2
+                    kill:
+                - stop:
+                    amount: 2
+
+    # check this comes later
+    - moment:
+        time: 30
+        services:
+            alphaNamedService:
+                - stop:
+                    amount: 1
+
+    - moment:
+        time: 50
+        mark: "(: removing containers :)"
+        services:
+            webserver:
+                - stop:
+                    specific: [0]
+    - moment:
+        time: 60
+        mark: "(: removing containers :)"
+        services:
+            webserver:
+                - stop:
+                    amount: 2
+    - moment:
+        time: 70
+        mark: "(: removing containers :)"
+        services:
+            webserver:
+                - stop:
+                    percentage: 30
+    - end: 90

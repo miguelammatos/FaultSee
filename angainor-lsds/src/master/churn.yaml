@@ -1,0 +1,79 @@
+churn:
+  synthetic:
+    - start:
+        # amount of replicas per service on start
+        simple_http: 10
+    - moment:
+        time: 10
+        services:
+          simple_http:
+            - custom:
+                replicas:
+                  # exclusive, one option only
+
+                  # option 1
+                  amount: 5
+
+                  # option 2
+                  # percentage: 50% # is always random replicas
+
+                  # option 3
+                  # slots counting start on 1
+                  # slots: [1, 2]
+                  # can also be specified like the following
+                  # slots:
+                  # - 1
+                  # - 2
+                fault_file_name: waste_cpu # REQUIRED
+                fault_file_folder: /usr/lib/faultsee/ # default value - /usr/lib/faultsee/
+                executable: /bin/sh # default value - /bin/sh
+                executable_arguments: # order is relevant # default is empty array
+                  - executable_arg1
+                  - executable_arg2
+                  - executable_arg3
+                fault_script_arguments: # order is relevant # default is empty array
+                  - script_arg1
+                  - script_arg2
+                  - script_arg3
+            - custom:
+                replicas:
+                  # exclusive, one or the other
+                  amount: 5
+                  # TODO specify which replicas # AKA slots ?? Maybe replica that sends signal
+                  # percentage: 50% # is always random replicas
+                fault_file_name: waste_cpu
+                fault_file_folder: /usr/lib/faultsee/ # default value
+                executable: /bin/sh # default value
+                fault_script_arguments: # order is relevant # default is empty array
+                  - 10
+    - moment:
+        time: 20
+        services:
+          simple_http:
+            # equivalent to docker scale simple_http=$(previous_amount+10)
+            - add:
+                replicas:
+                  amount: 10
+    - moment:
+        time: 30
+        services:
+          simple_http:
+            - kill:
+                replicas:
+                  amount: 1
+                signal: KILL # default is TERM
+    - moment:
+        time: 40
+        mark: "Any moment can have a custom mark"
+        services:
+          simple_http:
+            # equivalent to docker scale simple_http=$(previous_amount-1)
+            # therefore no signal can be specified
+            - rm:
+                replicas:
+                  amount: 1
+
+    - moment:
+        time: 45
+        mark: "An empty moment can have a custom mark"
+    - end: 50

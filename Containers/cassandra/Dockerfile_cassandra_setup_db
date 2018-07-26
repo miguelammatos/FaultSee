@@ -1,0 +1,7 @@
+FROM cassandra:3.11.4
+
+ENV CASANDRA_HOSTNAME tasks.cassandra
+
+COPY setup_database.cql .
+COPY setup_database.sh .
+CMD /bin/bash setup_database.sh

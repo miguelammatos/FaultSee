@@ -1,0 +1,19 @@
+USER=mapa12
+LSDSUITE_MASTER_NAME=faultsee-master
+LSDSUITE_SLAVE_NAME=faultsee-slave
+LSDSUITE_IPAM_PLUGIN_NAME=faultsee-ipam
+LSDSUITE_IPAM_SERVER_NAME=ipam-server
+
+all:
+	echo -e "\e[31;1mUSER: ${USER} \e[0m"
+	cd master; make USER=${USER} LSDSUITE_MASTER_NAME=${LSDSUITE_MASTER_NAME}
+	cd slave;  make USER=${USER} LSDSUITE_SLAVE_NAME=${LSDSUITE_SLAVE_NAME}
+	cd ipam;   make USER=${USER} LSDSUITE_IPAM_PLUGIN_NAME=${LSDSUITE_IPAM_PLUGIN_NAME}  LSDSUITE_IPAM_SERVER_NAME=${LSDSUITE_IPAM_SERVER_NAME}
+	cd ntp-sync; make USER=${USER}
+push:
+	echo -e "\e[31;1mUSER: ${USER} \e[0m"
+	# docker run -d -p 5000:5000 --restart=always --name USER USER:2;  sleep 10
+	cd master; make push USER=${USER} LSDSUITE_MASTER_NAME=${LSDSUITE_MASTER_NAME}
+	cd slave;  make push USER=${USER} LSDSUITE_SLAVE_NAME=${LSDSUITE_SLAVE_NAME}
+	cd ipam;   make push USER=${USER} LSDSUITE_IPAM_PLUGIN_NAME=${LSDSUITE_IPAM_PLUGIN_NAME}  LSDSUITE_IPAM_SERVER_NAME=${LSDSUITE_IPAM_SERVER_NAME}
+	cd ntp-sync; make push USER=${USER}

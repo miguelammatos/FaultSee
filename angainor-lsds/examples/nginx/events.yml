@@ -1,0 +1,20 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        siege: 0
+        nginx: 1
+    - moment:
+        time: 15
+        services:
+          siege:
+            - start:
+                  amount: 2
+    - moment:
+       time: 65
+       services:
+         siege:
+           - stop:
+               amount: 2
+    - end: 80

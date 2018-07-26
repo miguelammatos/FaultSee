@@ -1,0 +1,5 @@
+version: "3"
+services:
+  test-start:
+    image: "docker.io/library/alpine"
+    command: ["sleep", "10000"]

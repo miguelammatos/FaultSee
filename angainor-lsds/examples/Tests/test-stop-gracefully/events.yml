@@ -1,0 +1,18 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        simpleAlpine: 1
+        signalHandler: 1
+
+    - moment:
+        time: 15
+        services:
+            simpleAlpine:
+                - stop:
+                      amount: 1
+            signalHandler:
+                - stop:
+                        amount: 1
+    - end: 30

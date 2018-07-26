@@ -1,0 +1,10 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        alpine: 1
+    - moment:
+        time: 5
+        mark: testing_mark
+    - end: 10

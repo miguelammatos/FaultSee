@@ -1,0 +1,7 @@
+click==6.7
+docker==3.1.1
+paramiko==2.6.0
+scp==0.13.2
+PyYAML==3.13
+numpy
+pandas

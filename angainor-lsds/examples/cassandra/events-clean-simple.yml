@@ -1,0 +1,53 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        cassandra: 0
+        setup-service: 0
+        ycsbar: 0
+        ycsbal: 0
+    # give the cluster time to be good
+    - moment:
+        time: 10
+        services:
+          cassandra:
+            - start:
+                amount: 1
+    - moment:
+        time: 70
+        services:
+          cassandra:
+            - start:
+                amount: 1
+    - moment:
+        time: 140
+        services:
+          cassandra:
+            - start:
+                amount: 1
+    - moment:
+        time: 210
+        services:
+          cassandra:
+            - start:
+                amount: 1
+    - moment:
+        time: 300
+        services:
+          setup-service:
+            - start:
+                amount: 1
+    - moment:
+        time: 350
+        services:
+          ycsbal:
+            - start:
+                amount: 1
+    - moment:
+        time: 450
+        services:
+          ycsbar:
+            - start:
+                amount: 1
+    - end: 550

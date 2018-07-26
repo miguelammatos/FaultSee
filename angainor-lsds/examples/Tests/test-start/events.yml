@@ -1,0 +1,19 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        test-start: 0
+    - moment:
+        time: 10
+        services:
+            test-start:
+              - start:
+                  amount: 1
+    - moment:
+        time: 20
+        services:
+            test-start:
+              - start:
+                  amount: 1
+    - end: 30

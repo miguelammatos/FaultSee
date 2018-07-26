@@ -1,0 +1,36 @@
+version: "3"
+services:
+  bft-server:
+    image: 127.0.0.1:5000/bft
+    labels:
+      org.lsdsuite.stats:
+    networks:
+      - bft-net
+    environment:
+      # Need to manually adjust system.initial.view in config/system.config
+      PEER_NUMBER: &bft_number 4
+    deploy:
+      replicas: *bft_number
+    # Usage: ./server.sh <measurement interval> <reply size>
+    command: './server.sh 10000 100'
+
+  bft-client:
+    image: 127.0.0.1:5000/bft
+    labels:
+      org.lsdsuite.stats:
+    environment:
+      PEER_ID: '{{.Task.Slot}}'
+    networks:
+      - bft-net
+    # Usage: ./client.sh <number of operations> <request size> <interval> <read only?>
+    command: './client.sh 111222 100 50 false'
+
+
+networks:
+  bft-net:
+    attachable: true
+    driver: overlay
+    ipam:
+#      driver: ""
+      config:
+        - subnet: 10.56.0.0/16

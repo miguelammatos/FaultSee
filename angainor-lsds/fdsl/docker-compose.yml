@@ -1,0 +1,11 @@
+version: "3"
+services:
+  load-balancer:
+    image: "mapa12/server-signal-handler"
+    # command: ["sleep", "10000"]
+  web-server:
+    image: "mapa12/server-signal-handler"
+    # command: ["sleep", "10000"]
+  database:
+    image: "mapa12/server-signal-handler"
+    # command: ["sleep", "10000"]

@@ -1,0 +1,10 @@
+events:
+    - beginning:
+        webserver: 1
+    - moment:
+        time: 10
+        services:
+            webserver:
+                - stop:
+                      amount: 20
+    - end: 20

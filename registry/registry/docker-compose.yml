@@ -1,0 +1,35 @@
+version: '3'
+services:
+  registry:
+    image: registry:2
+    restart: always
+    expose:
+      - 5000
+    environment:
+      VIRTUAL_HOST: registry.lsd-master.tk
+      LETSENCRYPT_HOST: registry.lsd-master.tk
+      LETSENCRYPT_EMAIL: miguel.p.amaral@tecnico.ulisboa.pt
+
+  registry-ui:
+    image: konradkleine/docker-registry-frontend:v2
+    restart: always
+    expose:
+      - 80
+    environment:
+      VIRTUAL_HOST: ui.registry.lsd-master.tk
+      LETSENCRYPT_HOST: ui.registry.lsd-master.tk
+      LETSENCRYPT_EMAIL: miguel.p.amaral@tecnico.ulisboa.pt
+      ENV_DOCKER_REGISTRY_HOST: 'registry.lsd-master.tk'
+      ENV_REGISTRY_PROXY_FQDN: 'registry.lsd-master.tk'
+      ENV_DOCKER_REGISTRY_PORT: 443
+      ENV_DOCKER_REGISTRY_USE_SSL: 1
+      # FORCE_SSL: 'true'
+      ENV_SERVERNAME: 'ui.registry.lsd-master.tk'
+      ENV_MODE_BROWSE_ONLY: "true"
+    # ports:
+    #   - "80:80"
+    #   - "443:443"
+networks:
+  default:
+    external:
+      name: nginx-proxy

@@ -1,0 +1,78 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        cassandra: 0
+        setup-service: 0
+        ycsbarun: 0
+        ycsbaload: 0
+    # give the cluster time to be good
+    - moment:
+        time: 10
+        services:
+          cassandra:
+            - start:
+                amount: 1
+    - moment:
+        time: 200
+        services:
+          cassandra:
+            - start:
+                amount: 1
+    - moment:
+        time: 400
+        services:
+          cassandra:
+            - start:
+                amount: 1
+    - moment:
+        time: 600
+        services:
+          cassandra:
+            - start:
+                amount: 1
+    - moment:
+        time: 800
+        services:
+          setup-service:
+            - start:
+                amount: 1
+    - moment:
+        time: 900
+        services:
+          ycsbaload:
+            - start:
+                amount: 1
+    - moment:
+        time: 1400
+        services:
+          ycsbarun:
+            - start:
+                amount: 2
+    # inject the fault
+    - moment:
+        time: 2000
+        services:
+          cassandra:
+            - fault:
+                target:
+                  specific: [3]
+                kill:
+    - moment:
+        time: 2100
+        services:
+          cassandra:
+            - fault:
+                target:
+                    specific: [2]
+                custom:
+                    kills_container: "no"
+                    fault_file_name: remove_dead_node_from_cluster
+    - moment:
+        time: 2700
+        services:
+          cassandra:
+            - start:
+                amount: 1
+    - end: 4000

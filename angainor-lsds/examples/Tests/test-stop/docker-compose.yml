@@ -1,0 +1,11 @@
+version: "3"
+services:
+  test-stop:
+    image: "docker.io/mapa12/server-signal-handler"
+    # image: "docker.io/library/alpine"
+    # command: ["sleep", "10000"]
+    deploy:
+        resources:
+            limits:
+                cpus: '0.50'
+                memory: 50M

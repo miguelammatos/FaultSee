@@ -1,0 +1,4 @@
+#!  /bin/sh
+
+# used to tell cassandra server that a DN node is to be removed
+nodetool removenode $(nodetool status | grep DN | awk '{print $7}')

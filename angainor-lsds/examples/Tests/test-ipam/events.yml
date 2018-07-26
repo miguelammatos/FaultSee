@@ -1,0 +1,38 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        test-ipam: 0
+
+    - moment:
+        time: 10
+        services:
+            test-ipam:
+                - start:
+                    amount: 10
+    - moment:
+        time: 20
+        services:
+            test-ipam:
+                - start:
+                    amount: 10
+    - moment:
+        time: 30
+        services:
+            test-ipam:
+                - start:
+                    amount: 10
+    - moment:
+        time: 40
+        services:
+            test-ipam:
+                - start:
+                    amount: 10
+    - moment:
+        time: 50
+        services:
+            test-ipam:
+                - start:
+                    amount: 10
+    - end: 60

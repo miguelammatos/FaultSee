@@ -1,0 +1,30 @@
+nodes:
+  # first one is the master
+  # address you would choose to cluster advertise_addr parameter
+  - address: 127.0.0.1
+    user: miguel
+    password: !!PasswordPlaceHolder!!
+
+  ####     Home
+  # - address: 192.168.1.94
+  #   username: miguel
+  ## password: !!PasswordPlaceHolder!!
+  #   remote: false
+  # - address: 192.168.1.100
+  #   username: miguel
+  ## password: !!PasswordPlaceHolder!!
+
+  ####     AWS
+  # - address: 172.31.7.78
+  #   username: ec2-user
+  #   private_key: /opt/lsdsuite/keys/id_rsa
+  #   remote: true
+  # - address: 172.31.12.183
+  #   username: ec2-user
+  #   private_key: /opt/lsdsuite/keys/id_rsa
+  #   remote: true
+
+  ###       Another example
+  #  - address: 192.168.99.101
+  #    password: pa$$w0rd
+  #    username: john

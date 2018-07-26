@@ -1,0 +1,98 @@
+# inspired by https://github.com/docker-library/cassandra/issues/94
+# entrypoint reads hosts online and removes self ip
+version: "3.1"
+services:
+  cassandra:
+    labels:
+      # gather detailed stats
+      org.lsdsuite.stats: "true"
+    image: docker.io/mapa12/cassandra:server
+    environment:
+        DNS_CASSANDRA_NAME: tasks.cassandra
+        # DNS_CASSANDRA_NAME: tasks.cassandra_cassandra
+        cassandra.consistent.rangemovement: "false"
+        MAX_HEAP_SIZE: 2560M
+    deploy:
+      resources:
+        limits:
+            memory: 3G
+      # FaultSee forces restart_policy to be none anyway
+      restart_policy:
+          condition: none
+      replicas: 0
+      placement:
+         constraints:
+           - node.hostname != faultsee-5
+           - node.hostname != faultsee-0
+
+    networks:
+      - "backend"
+
+  setup-service:
+    environment:
+        CASANDRA_HOSTNAME: tasks.cassandra
+        # CASANDRA_HOSTNAME: tasks.cassandra_cassandra
+    deploy:
+      replicas: 0
+      restart_policy:
+          condition: none
+    image: docker.io/mapa12/cassandra:setup
+    networks:
+      - "backend"
+
+
+   # Workload A: Update heavy workload: 50/50% Mix of Reads/Writes
+   # Workload B: Read mostly workload: 95/5% Mix of Reads/Writes
+   # Workload C: Read-only: 100% reads
+   # Workload D: Read the latest workload: More traffic on recent inserts
+   # Workload E: Short ranges: Short range based queries
+   # Workload F: Read-modify-write: Read, modify and update existing records
+
+  ycsbal:
+    image: docker.io/mapa12/ycsb:latest
+    environment:
+            WORKLETTER: a
+            ACTION: load
+            DBTYPE: cassandra-cql
+            DBARGS: -p hosts=tasks.cassandra
+            # DBARGS: -p hosts=tasks.cassandra_cassandra
+            RECNUM: 10000
+            OPNUM:  12500
+    deploy:
+            restart_policy:
+                condition: none
+            replicas: 0
+            placement:
+               constraints:
+                 - node.hostname == faultsee-5
+    networks:
+      - "backend"
+
+  ycsbar:
+    image: docker.io/mapa12/ycsb:latest
+    environment:
+            WORKLETTER: a
+            ACTION: run
+            DBTYPE: cassandra-cql
+            DBARGS: -p hosts=tasks.cassandra
+            # DBARGS: -p hosts=tasks.cassandra_cassandra
+            THREADS: 10
+            RECNUM: 10000
+            OPNUM:  40000
+    deploy:
+            placement:
+                constraints:
+                   # - node.role != manager
+                   - node.hostname == faultsee-5
+            restart_policy:
+                condition: none
+            replicas: 0
+    networks:
+      - "backend"
+
+networks:
+  backend:
+    driver: overlay
+    ipam:
+      config:
+        - subnet: 10.22.0.0/16

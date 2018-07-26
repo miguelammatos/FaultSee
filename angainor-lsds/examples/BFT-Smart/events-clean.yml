@@ -1,0 +1,51 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        server-1: 0
+        server-2: 0
+        server-3: 0
+        server-4: 0
+        ycsb-client-load: 0
+        ycsb-client-run: 0
+
+    - moment:
+        time: 10
+        services:
+            server-1:
+                - start:
+                      amount: 1
+    - moment:
+        time: 100
+        services:
+            server-2:
+                - start:
+                      amount: 1
+    - moment:
+        time: 200
+        services:
+            server-3:
+                - start:
+                      amount: 1
+    - moment:
+        time: 300
+        services:
+            server-4:
+                - start:
+                      amount: 1
+
+    - moment:
+        time: 500
+        services:
+            ycsb-client-load:
+                - start:
+                      amount: 1
+    #  wait for operation LOAD to end
+    - moment:
+        time: 900
+        services:
+          ycsb-client-run:
+            - start:
+                    amount: 1
+    - end: 3600

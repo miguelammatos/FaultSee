@@ -1,0 +1,44 @@
+services:
+  bft-client:
+    churn:
+      synthetic:
+        - start: 0
+        - time: 20
+          add: 10
+        - time: 80
+          add: 10
+        - time: 110
+          add: 10
+        - time: 250
+          add: 10
+        - time: 280
+          add: 10
+        - time: 360
+          kill: 20
+        - end: 450
+
+  bft-server:
+    churn:
+      synthetic:
+        - start: 4
+#        - time: 35
+#          kill: 1
+#          signal: STOP
+#        - time: 45
+#          kill: 1
+#          signal: STOP
+#        - time: 80
+#          kill: 100%
+#          signal: CONT
+
+        - time: 160
+          kill: 1
+          signal: USR1
+#        - time: 45
+#          kill: 1
+#          signal: USR1
+        - time: 190
+          kill: 100%
+          signal: USR2
+
+        - end: 450

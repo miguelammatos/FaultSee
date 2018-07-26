@@ -1,0 +1,22 @@
+environment:
+    seed: 568
+    ntp_server: europe.pool.ntp.org
+events:
+    - beginning:
+        webserver: 0
+
+    # Check alpha Comes Before webserver
+    - moment:
+        time: 10
+        services:
+            webserver:
+                - start:
+                      amount: 3
+    # check 10 comes before 20
+    - moment:
+        time: 11
+        services:
+            webserver:
+                - stop:
+                      amount: 3
+    - end: 25

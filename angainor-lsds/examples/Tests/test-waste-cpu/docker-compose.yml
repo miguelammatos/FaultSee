@@ -1,0 +1,7 @@
+version: "3"
+services:
+  test-waste-cpu:
+    labels:
+        org.lsdsuite.stats:
+    image: "docker.io/library/alpine"
+    command: ["sleep", "10000"]

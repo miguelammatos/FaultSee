@@ -1,0 +1,15 @@
+version: "3"
+services:
+  test-ipam:
+    image: "docker.io/library/alpine"
+    command: ["sh", "-c", "hostname -i; sleep 10"]
+    deploy:
+      replicas: 10
+    networks:
+      - test-ipam-net
+
+networks:
+  test-ipam-net:
+    ipam:
+      config:
+        - subnet: 10.22.0.0/16
